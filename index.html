@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+    }
+
+    canvas {
+        position: fixed;
+        inset: 0;
+    }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const SIZE = 14;
+    const GLYPH = '●';
+    const VISIBLE = '#ffffff';
+    const HIDDEN = '#ff0000';
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        ctx.font = SIZE + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+    };
+
+    const render = (dots) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < dots.length; i++) {
+            const dot = dots[i];
+
+            ctx.fillStyle = dot[2] ? VISIBLE : HIDDEN;
+            ctx.fillText(GLYPH, dot[0] * canvas.width, dot[1] * canvas.height);
+        }
+    };
+
+    window.addEventListener('resize', resize);
+
+    window.addEventListener('message', ({ data }) => {
+        const payload = typeof data === 'string' ? JSON.parse(data) : data;
+
+        render(payload.dots || []);
+    });
+
+    resize();
+</script>
+</body>
+</html>
